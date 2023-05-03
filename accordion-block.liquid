@@ -1,0 +1,111 @@
+<div class="accordion-wrapper">
+  <h3 class="accordion-title">{{ section.settings.accordion_title }}</h3>
+  {% for item in section.settings.accordion_items %}
+  <div class="accordion-item">
+    <input type="checkbox" class="accordion-checkbox" id="accordion-item-{{ forloop.index }}">
+    <label for="accordion-item-{{ forloop.index }}" class="accordion-label">{{ item.accordion_item_title }}</label>
+    <div class="accordion-content-wrapper">
+      <div class="accordion-column">
+        {{ item.accordion_item_problem }}
+      </div>
+      <div class="accordion-column">
+        {{ item.accordion_item_solution }}
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% schema %}
+{
+  "name": "Accordion Block",
+  "settings": [
+    {
+      "type": "text",
+      "id": "accordion_title",
+      "label": "Accordion Title",
+      "placeholder": "Error Codes",
+      "default": "Main Title",
+      "info": "Error Codes"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "repeater",
+      "name": "Accordion Blocks",
+      "settings": [
+        {
+          "type": "text",
+          "id": "accordion_item_title",
+          "placeholder": "Battery dead",
+          "label": "Accordion Item Title"
+        },
+        {
+          "type": "richtext",
+          "id": "accordion_item_problem",
+          "default": "<p>Please describe the problem</p>",
+          "label": "The Problem"
+        },
+        {
+          "type": "richtext",
+          "id": "accordion_item_solution",
+          "default": "<p>Please provide a solution</p>",
+          "label": "The Solution"
+        }
+      ]
+    }
+  ]
+}
+
+{% endschema %}
+
+{% stylesheet %}
+   .accordion-wrapper {
+    background-color: #f4f4f4;
+    padding: 20px;
+    border-radius: 5px;
+  }
+  
+  .accordion-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .accordion-item {
+    margin-bottom: 10px;
+  }
+  
+  .accordion-checkbox {
+    display: none;
+  }
+  
+  .accordion-label {
+    display: block;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .accordion-content-wrapper {
+    display: none;
+  }
+  
+  .accordion-checkbox:checked + .accordion-label + .accordion-content-wrapper {
+    display: flex;
+  }
+  
+  .accordion-column {
+    flex-basis: 50%;
+    padding: 10px;
+  }
+  
+  .accordion-column p {
+    margin: 0;
+    text-align: center;
+  }
+
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}
