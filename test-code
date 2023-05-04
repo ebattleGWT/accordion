@@ -2,25 +2,23 @@
   <h3 class="accordion-title">{{ section.settings.accordion_title }}</h3>
   {% for block in section.blocks %}
     {% if block.type == 'accordion' %}
-      {% assign item = block.settings.accordion_item %}
       <div class="accordion-item">
         <input type="checkbox" class="accordion-checkbox" id="accordion-item-{{ forloop.index }}">
-        <label for="accordion-item-{{ forloop.index }}" class="accordion-label">{{ item.accordion_item_title }}</label>
+        <label for="accordion-item-{{ forloop.index }}" class="accordion-label">{{ block.settings.accordion_item_title }}</label>
         <div class="accordion-content-wrapper">
           <div class="accordion-column">
-            {{ item.accordion_item_column_1 }}
+            {{ block.settings.accordion_item_column_1 }}
           </div>
           <div class="accordion-column">
-            {{ item.accordion_item_column_2 }}
+            {{ block.settings.accordion_item_column_2 }}
           </div>
         </div>
       </div>
     {% endif %}
   {% endfor %}
 </div>
-
-{% stylesheet %}
- .accordion-wrapper {
+<style>
+  .accordion-wrapper {
   background-color: #f4f4f4;
   padding: 20px;
   border-radius: 5px;
@@ -64,7 +62,7 @@
   margin-right: 0;
 }
 
-{% endstylesheet %}
+</style>
 
 {% schema %}
 {
@@ -80,7 +78,7 @@
   "blocks": [
     {
       "type": "accordion",
-      "name": "Accordion Item",
+      "name": "Accordion Items",
       "settings": [
         {
           "type": "text",
