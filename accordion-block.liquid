@@ -1,20 +1,112 @@
 <div class="accordion-wrapper">
   <h3 class="accordion-title">{{ section.settings.accordion_title }}</h3>
-  {% for item in section.settings.accordion_items %}
-  <div class="accordion-item">
-    <input type="checkbox" class="accordion-checkbox" id="accordion-item-{{ forloop.index }}">
-    <label for="accordion-item-{{ forloop.index }}" class="accordion-label">{{ item.accordion_item_title }}</label>
-    <div class="accordion-content-wrapper">
-      <div class="accordion-column">
-        {{ item.accordion_item_problem }}
+  {% for block in section.blocks %}
+    {% if block.type == 'accordion' %}
+      <div class="accordion-item">
+        <input type="checkbox" class="accordion-checkbox" id="accordion-item-{{ block.id }}-{{ forloop.index }}">
+        <label for="accordion-item-{{ forloop.index }}" class="accordion-label">{{ block.settings.accordion_item_title }}</label>
+        <div class="accordion-content-wrapper hide">
+          <h2>{{ block.settings.accordion_item_error_title }}</h2>
+          <div class="accordion-column" style="background:#CCCCCC;">
+            {{ block.settings.accordion_item_column_1 }}
+          </div>
+          <div class="accordion-column" style="background:#d3d3d3;">
+            {{ block.settings.accordion_item_column_2 }}
+          </div>
+        </div>
       </div>
-      <div class="accordion-column">
-        {{ item.accordion_item_solution }}
-      </div>
-    </div>
-  </div>
+    {% endif %}
   {% endfor %}
 </div>
+<script>
+  const accordionItems = document.querySelectorAll('.accordion-item');
+
+  accordionItems.forEach(item => {
+    const accordionTitle = item.querySelector('.accordion-label');
+    const accordionContent = item.querySelector('.accordion-content-wrapper');
+
+    accordionTitle.addEventListener('click', event => {
+      const isActive = item.classList.contains('active');
+
+      accordionItems.forEach(otherItem => {
+        otherItem.classList.remove('active');
+        otherItem.querySelector('.accordion-content-wrapper').classList.add('hide');
+      });
+
+      if (!isActive) {
+        item.classList.add('active');
+        accordionContent.classList.remove('hide');
+        accordionContent.style.display = 'flex';
+        accordionContent.style.flexDirection = 'row';
+      }else {
+        accordionContent.style.display = 'none';
+        accordionContent.style.flexDirection = 'column';
+      }
+    });
+  });
+  
+</script>
+
+<style>
+  .accordion-item label:before {
+    content: "+";
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.accordion-item.active label:before {
+    content: "-";
+}
+.accordion-item input[type=checkbox]{
+  display:none !important;
+}
+  .accordion-wrapper {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+.accordion-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.accordion-item {
+  margin-bottom: 10px;
+}
+
+.accordion-label {
+  display: block;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+ .hide{
+  display:none;
+}
+.accordion-content-wrapper .active{
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.accordion-checkbox:checked + .accordion-label + .accordion-content-wrapper {
+  display: flex;
+}
+
+.accordion-column {
+  flex-basis: calc(50% - 10px);
+  margin-right: 20px;
+  padding: 10px;
+  background-color: white;
+  border-radius: 5px;
+}
+
+.accordion-column:last-of-type {
+  margin-right: 0;
+}
+
+</style>
 
 {% schema %}
 {
@@ -24,88 +116,48 @@
       "type": "text",
       "id": "accordion_title",
       "label": "Accordion Title",
-      "placeholder": "Error Codes",
-      "default": "Main Title",
-      "info": "Error Codes"
+      "default": "Main Title"
     }
   ],
   "blocks": [
     {
-      "type": "repeater",
-      "name": "Accordion Blocks",
+      "type": "accordion",
+      "name": "Accordion Items",
       "settings": [
         {
           "type": "text",
           "id": "accordion_item_title",
-          "placeholder": "Battery dead",
-          "label": "Accordion Item Title"
+          "label": "Accordion Item Title",
+          "default": "Accordion Item"
+        },
+        {
+          "type": "text",
+          "id": "accordion_item_error_title",
+          "label": "Accordion Error Meaning",
+          "default": "Accordion Item"
         },
         {
           "type": "richtext",
-          "id": "accordion_item_problem",
-          "default": "<p>Please describe the problem</p>",
-          "label": "The Problem"
+          "id": "accordion_item_column_1",
+          "label": "Description",
+          "default": "<p>Content for column 1</p>"
         },
         {
           "type": "richtext",
-          "id": "accordion_item_solution",
-          "default": "<p>Please provide a solution</p>",
-          "label": "The Solution"
+          "id": "accordion_item_column_2",
+          "label": "Solution",
+          "default": "<p>Content for column 2</p>"
         }
       ]
     }
+  ],
+  "presets": [
+    {
+      "name": {
+        "en": "Accordion Block"
+      },
+      "category": "Text"
+    }
   ]
 }
-
 {% endschema %}
-
-{% stylesheet %}
-   .accordion-wrapper {
-    background-color: #f4f4f4;
-    padding: 20px;
-    border-radius: 5px;
-  }
-  
-  .accordion-title {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
-  }
-  
-  .accordion-item {
-    margin-bottom: 10px;
-  }
-  
-  .accordion-checkbox {
-    display: none;
-  }
-  
-  .accordion-label {
-    display: block;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  
-  .accordion-content-wrapper {
-    display: none;
-  }
-  
-  .accordion-checkbox:checked + .accordion-label + .accordion-content-wrapper {
-    display: flex;
-  }
-  
-  .accordion-column {
-    flex-basis: 50%;
-    padding: 10px;
-  }
-  
-  .accordion-column p {
-    margin: 0;
-    text-align: center;
-  }
-
-{% endstylesheet %}
-
-{% javascript %}
-{% endjavascript %}
