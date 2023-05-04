@@ -2,23 +2,23 @@
   <h3 class="accordion-title">{{ section.settings.accordion_title }}</h3>
   {% for block in section.blocks %}
     {% if block.type == 'accordion' %}
-      {% for item in block.settings.accordion_items %}
-        <div class="accordion-item">
-          <input type="checkbox" class="accordion-checkbox" id="accordion-item-{{ forloop.index }}">
-          <label for="accordion-item-{{ forloop.index }}" class="accordion-label">{{ item.accordion_item_title }}</label>
-          <div class="accordion-content-wrapper">
-            <div class="accordion-column">
-              {{ item.accordion_item_column_1 }}
-            </div>
-            <div class="accordion-column">
-              {{ item.accordion_item_column_2 }}
-            </div>
+      {% assign item = block.settings.accordion_item %}
+      <div class="accordion-item">
+        <input type="checkbox" class="accordion-checkbox" id="accordion-item-{{ forloop.index }}">
+        <label for="accordion-item-{{ forloop.index }}" class="accordion-label">{{ item.accordion_item_title }}</label>
+        <div class="accordion-content-wrapper">
+          <div class="accordion-column">
+            {{ item.accordion_item_column_1 }}
+          </div>
+          <div class="accordion-column">
+            {{ item.accordion_item_column_2 }}
           </div>
         </div>
-      {% endfor %}
+      </div>
     {% endif %}
   {% endfor %}
 </div>
+
 {% stylesheet %}
  .accordion-wrapper {
   background-color: #f4f4f4;
@@ -80,7 +80,7 @@
   "blocks": [
     {
       "type": "accordion",
-      "name": "Accordion Items",
+      "name": "Accordion Item",
       "settings": [
         {
           "type": "text",
@@ -113,9 +113,3 @@
   ]
 }
 {% endschema %}
-
-
-
-
-
-
