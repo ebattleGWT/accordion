@@ -1,12 +1,13 @@
-<div class="accordion-wrapper">
+<div class="mainCord grid">
+<div class="accordion-wrapper grid__item">
   <h3 class="accordion-title">{{ section.settings.accordion_title }}</h3>
   {% for block in section.blocks %}
     {% if block.type == 'accordion' %}
       <div class="accordion-item">
         <input type="checkbox" class="accordion-checkbox" id="accordion-item-{{ block.id }}-{{ forloop.index }}">
         <label for="accordion-item-{{ forloop.index }}" class="accordion-label">{{ block.settings.accordion_item_title }}</label>
+          <div class="accordion-error-title hide"><h2>{{ block.settings.accordion_item_error_title }}</h2></div>
         <div class="accordion-content-wrapper hide">
-          <h2>{{ block.settings.accordion_item_error_title }}</h2>
           <div class="accordion-column" style="background:#CCCCCC;">
             {{ block.settings.accordion_item_column_1 }}
           </div>
@@ -18,23 +19,26 @@
     {% endif %}
   {% endfor %}
 </div>
+  </div>
 <script>
   const accordionItems = document.querySelectorAll('.accordion-item');
 
   accordionItems.forEach(item => {
     const accordionTitle = item.querySelector('.accordion-label');
     const accordionContent = item.querySelector('.accordion-content-wrapper');
-
+    const accordionError = item.querySelector('.accordion-error-title')
     accordionTitle.addEventListener('click', event => {
       const isActive = item.classList.contains('active');
 
       accordionItems.forEach(otherItem => {
         otherItem.classList.remove('active');
         otherItem.querySelector('.accordion-content-wrapper').classList.add('hide');
+        otherItem.querySelector('.accordion-error-title').classList.add('hide');
       });
 
       if (!isActive) {
         item.classList.add('active');
+        accordionError.classList.remove('hide');
         accordionContent.classList.remove('hide');
         accordionContent.style.display = 'flex';
         accordionContent.style.flexDirection = 'row';
@@ -48,42 +52,61 @@
 </script>
 
 <style>
+  .mainCord{
+    margin: 0 auto;
+    padding-right: 1.5rem;
+    padding-left: 1.5rem;
+    max-width: 73.4rem;
+  }
   .accordion-item label:before {
     content: "+";
     display: inline-block;
-    margin-right: 10px;
+    float:left;
 }
 
 .accordion-item.active label:before {
     content: "-";
+  float:left;
 }
 .accordion-item input[type=checkbox]{
   display:none !important;
 }
   .accordion-wrapper {
   background-color: white;
-  padding: 20px;
-  border-radius: 5px;
+  padding: 20px;  
 }
 
 .accordion-title {
-  font-size: 24px;
   font-weight: bold;
   margin-bottom: 20px;
+  font-size: calc(var(--font-heading-scale) * 4rem);
+  text-align:center;
 }
 
 .accordion-item {
-  margin-bottom: 10px;
+  margin-bottom: 0px;
+  border-top: 0.1rem solid rgba(var(--color-foreground), 0.08);
+  border-bottom: 0.1rem solid rgba(var(--color-foreground), 0.08);
+  padding: 1.5rem 0;
 }
 
 .accordion-label {
-  display: block;
-  font-size: 18px;
-  font-weight: bold;
-  cursor: pointer;
+    color: var(--gradient-base-accent-1);
+    display: inline-block;
+    max-width: calc(100% - 6rem);
+    min-height: 1.6rem;
+    margin: 0;
+    word-break: break-word;
+      font-family: var(--font-heading-family);
+    font-style: var(--font-heading-style);
+    font-size: calc(var(--font-heading-scale) * 1.5rem);
 }
+  .accordion-label:hover{
+        text-decoration: underline;
+    text-underline-offset: .3rem;
+  }
  .hide{
-  display:none;
+  display:none !important;
 }
 .accordion-content-wrapper .active{
   display: flex;
