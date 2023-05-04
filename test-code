@@ -18,6 +18,9 @@
   {% endfor %}
 </div>
 <style>
+.accordion-item input[type=checkbox]{
+  display:none !important;
+}
   .accordion-wrapper {
   background-color: #f4f4f4;
   padding: 20px;
