@@ -3,9 +3,9 @@
   {% for block in section.blocks %}
     {% if block.type == 'accordion' %}
       <div class="accordion-item">
-        <input type="checkbox" class="accordion-checkbox" id="accordion-item-{{ forloop.index }}">
+        <input type="checkbox" class="accordion-checkbox" id="accordion-item-{{ block.id }}-{{ forloop.index }}">
         <label for="accordion-item-{{ forloop.index }}" class="accordion-label">{{ block.settings.accordion_item_title }}</label>
-        <div class="accordion-content-wrapper">
+        <div class="accordion-content-wrapper hide">
           <div class="accordion-column">
             {{ block.settings.accordion_item_column_1 }}
           </div>
@@ -18,36 +18,30 @@
   {% endfor %}
 </div>
 <script>
-var accordions = document.querySelectorAll('.accordion-item');
+<script>
+  const accordionItems = document.querySelectorAll('.accordion-item');
 
-accordions.forEach(function (accordion) {
-  var checkbox = accordion.querySelector('.accordion-checkbox');
-  var label = accordion.querySelector('.accordion-label');
-  var content = accordion.querySelector('.accordion-content-wrapper');
-  var icon = label.querySelector('.accordion-icon');
+  accordionItems.forEach(item => {
+    const accordionTitle = item.querySelector('.accordion-label');
+    const accordionContent = item.querySelector('.accordion-content-wrapper');
 
-  checkbox.addEventListener('change', function () {
-    if (checkbox.checked) {
-      content.classList.add('active');
-      icon.innerText = '-';
-    } else {
-      content.classList.remove('active');
-      icon.innerText = '+';
-    }
+    accordionTitle.addEventListener('click', event => {
+      const isActive = item.classList.contains('active');
+
+      accordionItems.forEach(otherItem => {
+        otherItem.classList.remove('active');
+        otherItem.querySelector('.accordion-content-wrapper').classList.add('hide');
+        otherItem.querySelector('.accordion-label').innerHTML = '+';
+      });
+
+      if (!isActive) {
+        item.classList.add('active');
+        accordionContent.classList.remove('hide');
+        accordionTitle.innerHTML = '-';
+      }
+    });
   });
-
-  label.addEventListener('click', function () {
-    if (!checkbox.checked) {
-      checkbox.checked = true;
-      content.classList.add('active');
-      icon.innerText = '-';
-    } else {
-      checkbox.checked = false;
-      content.classList.remove('active');
-      icon.innerText = '+';
-    }
-  });
-});
+</script>
 
 </script>
 <style>
@@ -84,8 +78,8 @@ accordions.forEach(function (accordion) {
   font-weight: bold;
   cursor: pointer;
 }
-.accordion-content-wrapper {
-  display:none !important;
+ .hide{
+  display:none;
 }
 .accordion-content-wrapper .active{
   display: flex;
