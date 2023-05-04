@@ -18,7 +18,6 @@
   {% endfor %}
 </div>
 <script>
-<script>
   const accordionItems = document.querySelectorAll('.accordion-item');
 
   accordionItems.forEach(item => {
@@ -43,16 +42,7 @@
   });
 </script>
 
-</script>
 <style>
-  .accordion-label.active:before {
-  content: '-';
-}
-
-.accordion-label:before {
-  content: '+';
-  margin-right: 5px;
-}
 .accordion-item input[type=checkbox]{
   display:none !important;
 }
