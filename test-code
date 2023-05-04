@@ -17,7 +17,48 @@
     {% endif %}
   {% endfor %}
 </div>
+<script>
+var accordions = document.querySelectorAll('.accordion-item');
+
+accordions.forEach(function (accordion) {
+  var checkbox = accordion.querySelector('.accordion-checkbox');
+  var label = accordion.querySelector('.accordion-label');
+  var content = accordion.querySelector('.accordion-content-wrapper');
+  var icon = label.querySelector('.accordion-icon');
+
+  checkbox.addEventListener('change', function () {
+    if (checkbox.checked) {
+      content.classList.add('active');
+      icon.innerText = '-';
+    } else {
+      content.classList.remove('active');
+      icon.innerText = '+';
+    }
+  });
+
+  label.addEventListener('click', function () {
+    if (!checkbox.checked) {
+      checkbox.checked = true;
+      content.classList.add('active');
+      icon.innerText = '-';
+    } else {
+      checkbox.checked = false;
+      content.classList.remove('active');
+      icon.innerText = '+';
+    }
+  });
+});
+
+</script>
 <style>
+  .accordion-label.active:before {
+  content: '-';
+}
+
+.accordion-label:before {
+  content: '+';
+  margin-right: 5px;
+}
 .accordion-item input[type=checkbox]{
   display:none !important;
 }
@@ -43,8 +84,10 @@
   font-weight: bold;
   cursor: pointer;
 }
-
 .accordion-content-wrapper {
+  display:none !important;
+}
+.accordion-content-wrapper .active{
   display: flex;
   flex-wrap: wrap;
 }
