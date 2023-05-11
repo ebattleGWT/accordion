@@ -1,9 +1,9 @@
-<div class="mainCord grid accordion-block">
+<div class="mainCord grid">
 <div class="accordion-wrapper grid__item">
   <h2>{{ section.settings.accordion_title }}</h2>
   {% for block in section.blocks %}
     {% if block.type == 'accordion' %}
-      <div class="accordion-item" data-section-id="{{ section.id }}">
+      <div class="accordion-item">
         <div class="theLabel">
         <input type="checkbox" class="accordion-checkbox" id="accordion-item-{{ block.id }}-{{ forloop.index }}">
         {% render 'icon-accordion', icon: block.settings.icon %}
@@ -26,65 +26,60 @@
   </div>
 
 <script>
-function setupAccordion(accordionItems) {
-  function handleAccordionItemClick(event) {
-    console.log('Accordion item clicked');
-    const accordionTitle = event.currentTarget;
-    const accordionItem = accordionTitle.closest('.accordion-item');
-    const accordionContent = accordionItem.querySelector('.accordion-content-wrapper');
-    const accordionError = accordionItem.querySelector('.accordion-error-title');
-    const isActive = accordionItem.classList.contains('active');
+const accordionItems = document.querySelectorAll('.accordion-item');
 
-    if (!isActive) {
-      accordionItems.forEach(item => {
-        item.classList.remove('active');
-        item.querySelector('.accordion-content-wrapper').style.display = 'none';
-      });
+function handleAccordionItemClick(item) {
+  const accordionTitle = item.querySelector('.theLabel');
+  const accordionContent = item.querySelector('.accordion-content-wrapper');
+  const accordionError = item.querySelector('.accordion-error-title');
+  const isActive = item.classList.contains('active');
 
-      accordionItem.classList.add('active');
-      accordionContent.style.display = 'block';
-
-      // Check if the viewport width is less than or equal to a specific breakpoint for mobile devices
-      if (window.innerWidth > 768) {
-        accordionContent.style.display = 'flex';
-        accordionContent.style.flexDirection = 'row';
-      }
-
-      accordionError.classList.remove('hide');
-      accordionContent.classList.remove('hide');
-    } else {
-      accordionItem.classList.remove('active');
-      accordionContent.style.display = 'none';
-    }
-  }
-
-  function handleWindowResize() {
-    accordionItems.forEach(item => {
-      const isActive = item.classList.contains('active');
-      const accordionContent = item.querySelector('.accordion-content-wrapper');
-
-      if (isActive && window.innerWidth > 768) {
-        accordionContent.style.display = 'flex';
-        accordionContent.style.flexDirection = 'row';
-      } else if (isActive) {
-        accordionContent.style.display = 'block';
-        accordionContent.style.flexDirection = 'column';
-      } else {
-        accordionContent.style.display = 'none';
-      }
-    });
-  }
-
-  accordionItems.forEach(item => {
-    const accordionTitle = item.querySelector('.theLabel');
-    accordionTitle.addEventListener('click', handleAccordionItemClick);
+  accordionItems.forEach(otherItem => {
+    otherItem.classList.remove('active');
+    otherItem.querySelector('.accordion-content-wrapper').classList.add('hide');
+    otherItem.querySelector('.accordion-error-title').classList.add('hide');
   });
 
-  window.addEventListener('resize', handleWindowResize);
+  if (!isActive) {
+    item.classList.add('active');
+    accordionError.classList.remove('hide');
+    accordionContent.classList.remove('hide');
+
+    // Check if the viewport width is less than or equal to a specific breakpoint for mobile devices
+    if (window.innerWidth <= 768) {
+      accordionContent.style.display = 'block';
+    } else {
+      accordionContent.style.display = 'flex';
+      accordionContent.style.flexDirection = 'row';
+    }
+  } else {
+    accordionContent.style.display = 'none';
+    accordionContent.style.flexDirection = 'column';
+  }
 }
 
-const accordionItems = document.querySelectorAll('.accordion-item');
-setupAccordion(Array.from(accordionItems));
+function handleWindowResize() {
+  accordionItems.forEach(item => {
+    const isActive = item.classList.contains('active');
+    const accordionContent = item.querySelector('.accordion-content-wrapper');
+
+    if (isActive && window.innerWidth <= 768) {
+      accordionContent.style.display = 'block';
+      accordionContent.classList.add('accordion-content-wrapper-mobile');
+    } else if (isActive) {
+      accordionContent.style.display = 'flex';
+      accordionContent.style.flexDirection = 'row';
+      accordionContent.classList.remove('accordion-content-wrapper-mobile');
+    }
+  });
+}
+
+accordionItems.forEach(item => {
+  const accordionTitle = item.querySelector('.theLabel');
+  accordionTitle.addEventListener('click', () => handleAccordionItemClick(item));
+});
+
+window.addEventListener('resize', handleWindowResize);
 
 </script>
 
