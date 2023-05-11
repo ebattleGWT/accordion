@@ -1,9 +1,9 @@
-<div class="mainCord grid">
+<div class="mainCord grid accordion-block">
 <div class="accordion-wrapper grid__item">
   <h2>{{ section.settings.accordion_title }}</h2>
   {% for block in section.blocks %}
     {% if block.type == 'accordion' %}
-      <div class="accordion-item">
+      <div class="accordion-item" data-section-id="{{ section.id }}">
         <div class="theLabel">
         <input type="checkbox" class="accordion-checkbox" id="accordion-item-{{ block.id }}-{{ forloop.index }}">
         {% render 'icon-accordion', icon: block.settings.icon %}
@@ -28,29 +28,30 @@
 <script>
 function setupAccordion(accordionItems) {
   function handleAccordionItemClick(event) {
+    console.log('Accordion item clicked');
     const accordionTitle = event.currentTarget;
-    const accordionItem = accordionTitle.parentNode;
+    const accordionItem = accordionTitle.closest('.accordion-item');
     const accordionContent = accordionItem.querySelector('.accordion-content-wrapper');
     const accordionError = accordionItem.querySelector('.accordion-error-title');
     const isActive = accordionItem.classList.contains('active');
 
     if (!isActive) {
       accordionItems.forEach(item => {
-        if (item !== accordionItem) {
-          item.classList.remove('active');
-          item.querySelector('.accordion-content-wrapper').style.display = 'none';
-        }
+        item.classList.remove('active');
+        item.querySelector('.accordion-content-wrapper').style.display = 'none';
       });
 
       accordionItem.classList.add('active');
-      accordionContent.style.display = 'flex';
+      accordionContent.style.display = 'block';
 
       // Check if the viewport width is less than or equal to a specific breakpoint for mobile devices
-      if (window.innerWidth <= 768) {
-        accordionContent.style.flexDirection = 'column';
-      } else {
+      if (window.innerWidth > 768) {
+        accordionContent.style.display = 'flex';
         accordionContent.style.flexDirection = 'row';
       }
+
+      accordionError.classList.remove('hide');
+      accordionContent.classList.remove('hide');
     } else {
       accordionItem.classList.remove('active');
       accordionContent.style.display = 'none';
@@ -62,12 +63,12 @@ function setupAccordion(accordionItems) {
       const isActive = item.classList.contains('active');
       const accordionContent = item.querySelector('.accordion-content-wrapper');
 
-      if (isActive && window.innerWidth <= 768) {
-        accordionContent.style.display = 'flex';
-        accordionContent.style.flexDirection = 'column';
-      } else if (isActive) {
+      if (isActive && window.innerWidth > 768) {
         accordionContent.style.display = 'flex';
         accordionContent.style.flexDirection = 'row';
+      } else if (isActive) {
+        accordionContent.style.display = 'block';
+        accordionContent.style.flexDirection = 'column';
       } else {
         accordionContent.style.display = 'none';
       }
@@ -83,7 +84,7 @@ function setupAccordion(accordionItems) {
 }
 
 const accordionItems = document.querySelectorAll('.accordion-item');
-setupAccordion(accordionItems);
+setupAccordion(Array.from(accordionItems));
 
 </script>
 
