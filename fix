@@ -26,60 +26,57 @@
   </div>
 
 <script>
-const accordionItems = document.querySelectorAll('.accordion-item');
+document.addEventListener('DOMContentLoaded', () => {
+  const accordionItems = document.querySelectorAll('.accordion-item');
 
-function handleAccordionItemClick(item) {
-  const accordionTitle = item.querySelector('.theLabel');
-  const accordionContent = item.querySelector('.accordion-content-wrapper');
-  const accordionError = item.querySelector('.accordion-error-title');
-  const isActive = item.classList.contains('active');
-
-  accordionItems.forEach(otherItem => {
-    otherItem.classList.remove('active');
-    otherItem.querySelector('.accordion-content-wrapper').classList.add('hide');
-    otherItem.querySelector('.accordion-error-title').classList.add('hide');
-  });
-
-  if (!isActive) {
-    item.classList.add('active');
-    accordionError.classList.remove('hide');
-    accordionContent.classList.remove('hide');
-
-    // Check if the viewport width is less than or equal to a specific breakpoint for mobile devices
-    if (window.innerWidth <= 768) {
-      accordionContent.style.display = 'block';
-    } else {
-      accordionContent.style.display = 'flex';
-      accordionContent.style.flexDirection = 'row';
-    }
-  } else {
-    accordionContent.style.display = 'none';
-    accordionContent.style.flexDirection = 'column';
-  }
-}
-
-function handleWindowResize() {
   accordionItems.forEach(item => {
-    const isActive = item.classList.contains('active');
+    const accordionTitle = item.querySelector('.theLabel');
     const accordionContent = item.querySelector('.accordion-content-wrapper');
+    const accordionError = item.querySelector('.accordion-error-title');
 
-    if (isActive && window.innerWidth <= 768) {
-      accordionContent.style.display = 'block';
-      accordionContent.classList.add('accordion-content-wrapper-mobile');
-    } else if (isActive) {
-      accordionContent.style.display = 'flex';
-      accordionContent.style.flexDirection = 'row';
-      accordionContent.classList.remove('accordion-content-wrapper-mobile');
-    }
+    accordionTitle.addEventListener('click', () => {
+      const isActive = item.classList.contains('active');
+
+      accordionItems.forEach(otherItem => {
+        otherItem.classList.remove('active');
+        otherItem.querySelector('.accordion-content-wrapper').classList.add('hide');
+        otherItem.querySelector('.accordion-error-title').classList.add('hide');
+      });
+
+      if (!isActive) {
+        item.classList.add('active');
+        accordionError.classList.remove('hide');
+        accordionContent.classList.remove('hide');
+
+        if (window.innerWidth <= 768) {
+          accordionContent.style.display = 'block';
+        } else {
+          accordionContent.style.display = 'flex';
+          accordionContent.style.flexDirection = 'row';
+        }
+      } else {
+        accordionContent.style.display = 'none';
+        accordionContent.style.flexDirection = 'column';
+      }
+    });
   });
-}
 
-accordionItems.forEach(item => {
-  const accordionTitle = item.querySelector('.theLabel');
-  accordionTitle.addEventListener('click', () => handleAccordionItemClick(item));
+  window.addEventListener('resize', () => {
+    accordionItems.forEach(item => {
+      const isActive = item.classList.contains('active');
+      const accordionContent = item.querySelector('.accordion-content-wrapper');
+
+      if (isActive && window.innerWidth <= 768) {
+        accordionContent.style.display = 'block';
+        accordionContent.classList.add('accordion-content-wrapper-mobile');
+      } else if (isActive) {
+        accordionContent.style.display = 'flex';
+        accordionContent.style.flexDirection = 'row';
+        accordionContent.classList.remove('accordion-content-wrapper-mobile');
+      }
+    });
+  });
 });
-
-window.addEventListener('resize', handleWindowResize);
 
 </script>
 
