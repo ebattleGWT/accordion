@@ -3,7 +3,7 @@
   <h2>{{ section.settings.accordion_title }}</h2>
   {% for block in section.blocks %}
     {% if block.type == 'accordion' %}
-      <div class="accordion-item">
+      <div class="accordion-item" data-block-id="{{ block.id }}" data-section-id="{{ section.id }}" >
         <div class="theLabel">
         <input type="checkbox" class="accordion-checkbox" id="accordion-item-{{ block.id }}-{{ forloop.index }}">
         {% render 'icon-accordion', icon: block.settings.icon %}
@@ -26,60 +26,52 @@
   </div>
 
 <script>
-const accordionItems = document.querySelectorAll('.accordion-item');
+document.addEventListener('DOMContentLoaded', () => {
+  const accordionBlocks = Array.from(document.querySelectorAll('.accordion-block'));
 
-function handleAccordionItemClick(item) {
-  const accordionTitle = item.querySelector('.theLabel');
-  const accordionContent = item.querySelector('.accordion-content-wrapper');
-  const accordionError = item.querySelector('.accordion-error-title');
-  const isActive = item.classList.contains('active');
+  accordionBlocks.forEach(accordionBlock => {
+    const blockId = accordionBlock.getAttribute('data-block-id');
+    const sectionId = accordionBlock.getAttribute('data-section-id');
+    const accordionItems = Array.from(accordionBlock.querySelectorAll(`#${blockId}-${sectionId} .accordion-item`));
+    const accordionTitles = Array.from(accordionBlock.querySelectorAll(`#${blockId}-${sectionId} .theLabel`));
+    const accordionContents = Array.from(accordionBlock.querySelectorAll(`#${blockId}-${sectionId} .accordion-content-wrapper`));
 
-  accordionItems.forEach(otherItem => {
-    otherItem.classList.remove('active');
-    otherItem.querySelector('.accordion-content-wrapper').classList.add('hide');
-    otherItem.querySelector('.accordion-error-title').classList.add('hide');
+    accordionTitles.forEach((accordionTitle, index) => {
+      accordionTitle.addEventListener('click', () => {
+        const isActive = accordionItems[index].classList.contains('active');
+
+        accordionItems.forEach(item => {
+          item.classList.remove('active');
+          item.querySelector('.accordion-content-wrapper').style.display = 'none';
+        });
+
+        if (!isActive) {
+          accordionItems[index].classList.add('active');
+          accordionContents[index].style.display = 'block';
+
+          if (window.innerWidth > 768) {
+            accordionContents[index].style.display = 'flex';
+            accordionContents[index].style.flexDirection = 'row';
+          }
+        } else {
+          accordionContents[index].style.display = 'none';
+        }
+      });
+    });
+
+    window.addEventListener('resize', () => {
+      const activeIndex = accordionItems.findIndex(item => item.classList.contains('active'));
+
+      if (activeIndex !== -1 && window.innerWidth > 768) {
+        accordionContents[activeIndex].style.display = 'flex';
+        accordionContents[activeIndex].style.flexDirection = 'row';
+      } else if (activeIndex !== -1) {
+        accordionContents[activeIndex].style.display = 'block';
+        accordionContents[activeIndex].style.flexDirection = 'column';
+      }
+    });
   });
-
-  if (!isActive) {
-    item.classList.add('active');
-    accordionError.classList.remove('hide');
-    accordionContent.classList.remove('hide');
-
-    // Check if the viewport width is less than or equal to a specific breakpoint for mobile devices
-    if (window.innerWidth <= 768) {
-      accordionContent.style.display = 'block';
-    } else {
-      accordionContent.style.display = 'flex';
-      accordionContent.style.flexDirection = 'row';
-    }
-  } else {
-    accordionContent.style.display = 'none';
-    accordionContent.style.flexDirection = 'column';
-  }
-}
-
-function handleWindowResize() {
-  accordionItems.forEach(item => {
-    const isActive = item.classList.contains('active');
-    const accordionContent = item.querySelector('.accordion-content-wrapper');
-
-    if (isActive && window.innerWidth <= 768) {
-      accordionContent.style.display = 'block';
-      accordionContent.classList.add('accordion-content-wrapper-mobile');
-    } else if (isActive) {
-      accordionContent.style.display = 'flex';
-      accordionContent.style.flexDirection = 'row';
-      accordionContent.classList.remove('accordion-content-wrapper-mobile');
-    }
-  });
-}
-
-accordionItems.forEach(item => {
-  const accordionTitle = item.querySelector('.theLabel');
-  accordionTitle.addEventListener('click', () => handleAccordionItemClick(item));
 });
-
-window.addEventListener('resize', handleWindowResize);
 
 </script>
 
