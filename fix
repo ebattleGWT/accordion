@@ -27,52 +27,54 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const accordionItems = document.querySelectorAll('.accordion-item');
+  const accordionBlocks = document.querySelectorAll('.accordion-block');
 
-  accordionItems.forEach(item => {
-    const accordionTitle = item.querySelector('.theLabel');
-    const accordionContent = item.querySelector('.accordion-content-wrapper');
-    const accordionError = item.querySelector('.accordion-error-title');
+  accordionBlocks.forEach(accordionBlock => {
+    const accordionItems = accordionBlock.querySelectorAll('.accordion-item');
+    const accordionTitles = accordionBlock.querySelectorAll('.theLabel');
+    const accordionContents = accordionBlock.querySelectorAll('.accordion-content-wrapper');
+    const accordionErrors = accordionBlock.querySelectorAll('.accordion-error-title');
 
-    accordionTitle.addEventListener('click', () => {
-      const isActive = item.classList.contains('active');
+    accordionTitles.forEach((accordionTitle, index) => {
+      accordionTitle.addEventListener('click', () => {
+        const isActive = accordionItems[index].classList.contains('active');
 
-      accordionItems.forEach(otherItem => {
-        otherItem.classList.remove('active');
-        otherItem.querySelector('.accordion-content-wrapper').classList.add('hide');
-        otherItem.querySelector('.accordion-error-title').classList.add('hide');
-      });
+        accordionItems.forEach(item => {
+          item.classList.remove('active');
+        });
 
-      if (!isActive) {
-        item.classList.add('active');
-        accordionError.classList.remove('hide');
-        accordionContent.classList.remove('hide');
+        accordionContents.forEach(content => {
+          content.style.display = 'none';
+        });
 
-        if (window.innerWidth <= 768) {
-          accordionContent.style.display = 'block';
-        } else {
-          accordionContent.style.display = 'flex';
-          accordionContent.style.flexDirection = 'row';
+        accordionErrors.forEach(error => {
+          error.classList.add('hide');
+        });
+
+        if (!isActive) {
+          accordionItems[index].classList.add('active');
+
+          if (window.innerWidth <= 768) {
+            accordionContents[index].style.display = 'block';
+          } else {
+            accordionContents[index].style.display = 'flex';
+            accordionContents[index].style.flexDirection = 'row';
+          }
+
+          accordionErrors[index].classList.remove('hide');
+          accordionContents[index].classList.remove('hide');
         }
-      } else {
-        accordionContent.style.display = 'none';
-        accordionContent.style.flexDirection = 'column';
-      }
+      });
     });
-  });
 
-  window.addEventListener('resize', () => {
-    accordionItems.forEach(item => {
-      const isActive = item.classList.contains('active');
-      const accordionContent = item.querySelector('.accordion-content-wrapper');
+    window.addEventListener('resize', () => {
+      const activeIndex = Array.from(accordionItems).findIndex(item => item.classList.contains('active'));
 
-      if (isActive && window.innerWidth <= 768) {
-        accordionContent.style.display = 'block';
-        accordionContent.classList.add('accordion-content-wrapper-mobile');
-      } else if (isActive) {
-        accordionContent.style.display = 'flex';
-        accordionContent.style.flexDirection = 'row';
-        accordionContent.classList.remove('accordion-content-wrapper-mobile');
+      if (activeIndex !== -1 && window.innerWidth <= 768) {
+        accordionContents[activeIndex].style.display = 'block';
+      } else if (activeIndex !== -1) {
+        accordionContents[activeIndex].style.display = 'flex';
+        accordionContents[activeIndex].style.flexDirection = 'row';
       }
     });
   });
