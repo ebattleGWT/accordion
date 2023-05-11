@@ -1,0 +1,463 @@
+<div class="mainCord grid">
+<div class="accordion-wrapper grid__item">
+  <h2>{{ section.settings.accordion_title }}</h2>
+  {% for block in section.blocks %}
+    {% if block.type == 'accordion' %}
+      <div class="accordion-item">
+        <div class="theLabel">
+        <input type="checkbox" class="accordion-checkbox" id="accordion-item-{{ block.id }}-{{ forloop.index }}">
+        {% render 'icon-accordion', icon: block.settings.icon %}
+        <label for="accordion-item-{{ forloop.index }}" class="accordion-label">{{ block.settings.accordion_item_title }}</label>
+        {% render 'icon-caret' %}
+        </div>
+          <div class="accordion-error-title hide"><h3>{{ block.settings.accordion_item_error_title }}</h3></div>
+        <div class="accordion-content-wrapper hide">
+          <div class="accordion-column" style="background:#CCCCCC;">
+            {{ block.settings.accordion_item_column_1 }}
+          </div>
+          <div class="accordion-column" style="background:#d3d3d3;">
+            {{ block.settings.accordion_item_column_2 }}
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  {% endfor %}
+</div>
+  </div>
+
+<script>
+function setupAccordion(accordionItems) {
+  function handleAccordionItemClick(event) {
+    const accordionTitle = event.currentTarget;
+    const accordionItem = accordionTitle.parentNode;
+    const accordionContent = accordionItem.querySelector('.accordion-content-wrapper');
+    const accordionError = accordionItem.querySelector('.accordion-error-title');
+    const isActive = accordionItem.classList.contains('active');
+
+    if (!isActive) {
+      accordionItems.forEach(item => {
+        if (item !== accordionItem) {
+          item.classList.remove('active');
+          item.querySelector('.accordion-content-wrapper').style.display = 'none';
+        }
+      });
+
+      accordionItem.classList.add('active');
+      accordionContent.style.display = 'flex';
+
+      // Check if the viewport width is less than or equal to a specific breakpoint for mobile devices
+      if (window.innerWidth <= 768) {
+        accordionContent.style.flexDirection = 'column';
+      } else {
+        accordionContent.style.flexDirection = 'row';
+      }
+    } else {
+      accordionItem.classList.remove('active');
+      accordionContent.style.display = 'none';
+    }
+  }
+
+  function handleWindowResize() {
+    accordionItems.forEach(item => {
+      const isActive = item.classList.contains('active');
+      const accordionContent = item.querySelector('.accordion-content-wrapper');
+
+      if (isActive && window.innerWidth <= 768) {
+        accordionContent.style.display = 'flex';
+        accordionContent.style.flexDirection = 'column';
+      } else if (isActive) {
+        accordionContent.style.display = 'flex';
+        accordionContent.style.flexDirection = 'row';
+      } else {
+        accordionContent.style.display = 'none';
+      }
+    });
+  }
+
+  accordionItems.forEach(item => {
+    const accordionTitle = item.querySelector('.theLabel');
+    accordionTitle.addEventListener('click', handleAccordionItemClick);
+  });
+
+  window.addEventListener('resize', handleWindowResize);
+}
+
+const accordionItems = document.querySelectorAll('.accordion-item');
+setupAccordion(accordionItems);
+
+</script>
+
+<style>
+  .accordion-item .icon-caret{
+        position: absolute;
+    height: .6rem;
+    right: 1.5rem;
+    top: calc(50% - .2rem);
+  }
+  .accordion-item.active .icon-caret{
+    transform: rotate(180deg);
+  }
+  .accordion-wrapper h2{
+    margin-bottom: 2rem;
+    margin-top: 0;
+    font-size: calc(var(--font-heading-scale) * 4rem);
+    font-family: var(--font-heading-family);
+    font-style: var(--font-heading-style);
+    font-weight: var(--font-heading-weight);
+    letter-spacing: calc(var(--font-heading-scale) * .06rem);
+    color: rgb(var(--color-foreground));
+    line-height: calc(1 + .3/max(1,var(--font-heading-scale)));
+    word-break: break-word;
+    text-align: center;
+    display:block;
+    margin-block-start: 0.83em;
+    margin-block-end: 0.83em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+  }
+  .mainCord{
+    margin: 0 auto;
+    padding-right: 1.5rem;
+    padding-left: 1.5rem;
+    max-width: 73.4rem;
+  }
+.theLabel{
+   padding: 1.5rem 0;
+  display: flex;
+    position: relative;
+    line-height: 1;
+}
+  .theLabel .icon-accordion{
+    align-self: center;
+    fill: var(--gradient-base-accent-1);
+    height: calc(var(--font-heading-scale) * 2rem);
+    margin-right: calc(var(--font-heading-scale) * 1rem);
+    width: calc(var(--font-heading-scale) * 2rem);
+}
+  
+.accordion-item input[type=checkbox]{
+  display:none !important;
+}
+  .accordion-wrapper {
+  background-color: white;
+  padding: 20px;  
+ 
+}
+
+.accordion-title {
+  font-weight: bold;
+  margin-bottom: 20px;
+  font-size: calc(var(--font-heading-scale) * 4rem);
+  text-align:center;
+}
+
+.accordion-item {
+  margin-bottom: 0px;
+  border-top: 0.1rem solid rgba(var(--color-foreground), 0.08);
+  border-bottom: 0.1rem solid rgba(var(--color-foreground), 0.08);
+}
+
+.accordion-label {
+    color: var(--gradient-base-accent-1);
+    display: inline-block;
+    max-width: calc(100% - 6rem);
+    min-height: 1.6rem;
+    margin: 0;
+    word-break: break-word;
+      font-family: var(--font-heading-family);
+    font-style: var(--font-heading-style);
+    font-size: calc(var(--font-heading-scale) * 1.5rem);
+}
+  .accordion-label:hover{
+        text-decoration: underline;
+    text-underline-offset: .3rem;
+  }
+ .hide{
+  display:none !important;
+}
+
+
+.accordion-checkbox:checked + .accordion-label + .accordion-content-wrapper {
+  display: flex;
+}
+@media screen and (min-width:768px){
+  .accordion-content-wrapper .active{
+  display: flex;
+  flex-wrap: wrap;
+}
+  .accordion-column {
+  flex-basis: calc(50% - 10px);
+  margin-right: 20px;
+  padding: 10px;
+  background-color: white;
+  border-radius: 5px;
+}
+ 
+}
+  @media screen and (max-width:768px){
+ .accordion-content-wrapper-mobile .active{
+  display: block !important;
+  flex-wrap: wrap;
+}
+.accordion-content-wrapper-mobile h2{
+        font-size: calc(var(--font-heading-scale) * 2rem) !important;
+    }
+    .accordion-column {
+  flex-basis: calc(100% - 10px) !important;
+  margin-right: 0px !important;
+  padding: 0px !important;
+  background-color: white;
+  border-radius: 5px;
+}
+  }
+
+ .accordion-column {
+  flex-basis: calc(50% - 10px);
+  margin-right: 20px;
+  padding: 10px;
+  background-color: white;
+  border-radius: 5px;
+}
+.accordion-column:last-of-type {
+  margin-right: 0;
+}
+
+</style>
+
+{% schema %}
+{
+  "name": "Accordion Block",
+  "settings": [
+    {
+      "type": "text",
+      "id": "accordion_title",
+      "label": "Accordion Title",
+      "default": "Main Title"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "accordion",
+      "name": "Accordion Items",
+      "settings": [
+        {
+          "type": "text",
+          "id": "accordion_item_title",
+          "label": "Accordion Item Title",
+          "default": "Accordion Item"
+        },
+          {
+          "type": "select",
+          "id": "icon",
+          "options": [
+            {
+              "value": "none",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__1.label"
+            },
+            {
+              "value": "apple",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__2.label"
+            },
+            {
+              "value": "banana",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__3.label"
+            },
+            {
+              "value": "bottle",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__4.label"
+            },
+            {
+              "value": "box",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__5.label"
+            },
+            {
+              "value": "carrot",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__6.label"
+            },
+            {
+              "value": "chat_bubble",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__7.label"
+            },
+            {
+              "value": "check_mark",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__8.label"
+            },
+            {
+              "value": "clipboard",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__9.label"
+            },
+            {
+              "value": "dairy",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__10.label"
+            },
+            {
+              "value": "dairy_free",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__11.label"
+            },
+            {
+              "value": "dryer",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__12.label"
+            },
+            {
+              "value": "eye",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__13.label"
+            },
+            {
+              "value": "fire",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__14.label"
+            },
+            {
+              "value": "gluten_free",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__15.label"
+            },
+            {
+              "value": "heart",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__16.label"
+            },
+            {
+              "value": "iron",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__17.label"
+            },
+            {
+              "value": "leaf",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__18.label"
+            },
+            {
+              "value": "leather",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__19.label"
+            },
+            {
+              "value": "lightning_bolt",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__20.label"
+            },
+            {
+              "value": "lipstick",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__21.label"
+            },
+            {
+              "value": "lock",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__22.label"
+            },
+            {
+              "value": "map_pin",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__23.label"
+            },
+            {
+              "value": "nut_free",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__24.label"
+            },
+            {
+              "value": "pants",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__25.label"
+            },
+            {
+              "value": "paw_print",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__26.label"
+            },
+            {
+              "value": "pepper",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__27.label"
+            },
+            {
+              "value": "perfume",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__28.label"
+            },
+            {
+              "value": "plane",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__29.label"
+            },
+            {
+              "value": "plant",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__30.label"
+            },
+            {
+              "value": "price_tag",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__31.label"
+            },
+            {
+              "value": "question_mark",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__32.label"
+            },
+            {
+              "value": "recycle",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__33.label"
+            },
+            {
+              "value": "return",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__34.label"
+            },
+            {
+              "value": "ruler",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__35.label"
+            },
+            {
+              "value": "serving_dish",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__36.label"
+            },
+            {
+              "value": "shirt",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__37.label"
+            },
+            {
+              "value": "shoe",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__38.label"
+            },
+            {
+              "value": "silhouette",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__39.label"
+            },
+            {
+              "value": "snowflake",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__40.label"
+            },
+            {
+              "value": "star",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__41.label"
+            },
+            {
+              "value": "stopwatch",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__42.label"
+            },
+            {
+              "value": "truck",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__43.label"
+            },
+            {
+              "value": "washing",
+              "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.options__44.label"
+            }
+          ],
+          "default": "check_mark",
+          "label": "t:sections.collapsible_content.blocks.collapsible_row.settings.icon.label"
+        },
+        {
+          "type": "text",
+          "id": "accordion_item_error_title",
+          "label": "Accordion Dropdown Heading",
+          "default": "Accordion Item"
+        },
+        {
+          "type": "richtext",
+          "id": "accordion_item_column_1",
+          "label": "Description",
+          "default": "<p>Content for column 1</p>"
+        },
+        {
+          "type": "richtext",
+          "id": "accordion_item_column_2",
+          "label": "For sections with 2 columns only Solution",
+          "default": "<p>Content for column 2</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": {
+        "en": "Accordion Block"
+      },
+      "category": "Text"
+    }
+  ]
+}
+{% endschema %}
